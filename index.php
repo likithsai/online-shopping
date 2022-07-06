@@ -1,10 +1,4 @@
 <?php
-    //  check for config files
-    //  if config file exist, navigate to homepage
-    //  if not, navigate to install script
-    if(file_exists('src/config/config.php')) {
-        echo 'config file exist';
-    } else {
-        header('location: src/install/');
-    }
+    require_once './src/utils/Utils.php';
+    check_for_config_files('src/config/config.php', './src/', './src/install/');
 ?>
