@@ -1,4 +1,13 @@
 <?php
-    require_once './src/utils/Utils.php';
-    check_for_config_files('src/config/config.php', './src/', './src/install/');
+    error_reporting(E_ALL);
+    require 'component/header.php';
+    
+    //  check if config file exist or not
+    if(!file_exists('config/config.php')) {
+        header('location: ./install/');
+    } else {
+        echo '<h1>Homepage</h1>';
+    }
+
+    require_once 'component/footer.php';
 ?>
