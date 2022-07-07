@@ -24,7 +24,10 @@
                         </div>
                         <div class="mb-3">
                             <label for="exampleInputEmail1" class="form-label">Database Server</label>
-                            <input type="text" class="form-control" id="inp_dbserver" name="inp_dbserver" aria-describedby="DB Server">
+                            <div class="input-group">
+                                <span class="input-group-text" id="basic-addon3">https://</span>
+                                <input type="text" class="form-control" id="inp_dbserver" name="inp_dbserver" aria-describedby="DB Server">
+                            </div>
                             <div id="emailHelp" class="form-text">We\'ll never share your email with anyone else.</div>
                         </div>
                         <div class="d-md-flex">
