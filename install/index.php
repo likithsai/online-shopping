@@ -2,42 +2,66 @@
     require '../component/header.php';
     include '../class/MySQLiDB.class.php';
 
-    $var = '<?php 
-        define("server", "likithsai");
-        define("username", "root");
-        define("password", "");
-        define("database", "likithsai");
-    ?>';
-
-    // file_put_contents('../config/config.php', $var);
-
-    $err = '';
+    error_reporting(E_ERROR | E_PARSE);
+    $err = array();
     if(isset($_POST['frm_submit'])) {
         $DBServer = $_POST['inp_dbserver'];
         $DBUsername = $_POST['inp_dbuser'];
         $DBPassword = $_POST['inp_dbpassword'];
         $DBName = $_POST['inp_dbname'];
-        $AdminUser = $_POST['inp_adminuser'];
+        $AdminUsername = $_POST['inp_adminuser'];
         $AdminPass = $_POST['inp_adminpass'];
         $AdminConfirmPass = $_POST['inp_confirm_pwd'];
         $AdminEmail = $_POST['inp_email'];
 
+        //  connect to database server
         try {
             $mysqli = new SimpleMySQLi($DBServer, $DBUsername, $DBPassword, $DBName, "utf8mb4", "assoc");
+            //  create table
+            $mysqli->query("
+                CREATE TABLE tbl_users (
+                    user_id INT(11) NOT NULL,
+                    user_name VARCHAR(50) NOT NULL,
+                    user_pass VARCHAR(200) NOT NULL,
+                    user_createddate DATETIME DEFAULT CURRENT_TIMESTAMP,
+                    PRIMARY KEY(user_id)
+                )
+            ", []);
         } catch(Exception $e) {
-            $err = $e->getMessage();
-            // error_log($e->getMessage());
+            array_push($err, $e->getMessage());
         }
 
-        var_dump($_POST);
+        //  check for password and confirm password
+        if($AdminPass != $AdminConfirmPass) {
+            array_push($err, "Admin Password and Admin Confirm password not matching!");
+        }
+
+        if(count($err) == 0) {
+            $var = '<?php 
+                define("DBServer", "' . $DBServer . '");
+                define("DBUsername", "' . $DBUsername . '");
+                define("DBPassword", "' . $DBPassword . '");
+                define("DBName", "' . $DBName . '");
+                define("AdminUser", "' . $AdminUsername . '");
+                define("AdminPassword", "' . md5($AdminPass) . '");
+                define("AdminEmail", "' . $AdminEmail . '");
+            ?>';
+            file_put_contents('../config/config.php', trim(preg_replace('/\t+/', '', $var)));
+        } else {
+            foreach ($err as $value) {
+                echo '
+                    <div class="container my-4 alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong class="me-2">ERROR:</strong> <span>' . $value . '</span>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                ';
+               
+            }
+        }
     }
 
     //  check if config file exist or not
     if(!file_exists('../config/config.php')) {
-        if(strlen($err) > 0) {
-            echo '<div class="container alert alert-danger my-4 shadow-sm rounded-0" role="alert"><b class="me-2">ERROR:</b><span>' . $err . '</span></div>';
-        }
-
         echo '
             <div class="container my-4 card shadow-sm border-0 rounded-0">
                 <div class="card-body">
