@@ -1,5 +1,4 @@
 <?php
-
     error_reporting(E_ALL);
     include 'class/MySQLiDB.class.php';
     //  check for config files exits or not
